@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import {
+  Keyboard,
   Platform,
   ScrollView,
   StyleSheet,
@@ -7,9 +9,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 function Body() {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const keyboardShowListener = Keyboard.addListener('keyboardWillShow', event => {
+      setKeyboardHeight(event.endCoordinates.height - 10);
+    });
+
+    const keyboardHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    }
+  }, []);
+
   return (
     <>
       <ScrollView style={styles.scrollView}>
@@ -20,13 +38,11 @@ function Body() {
             placeholder="I'm a TextInput"
           />
         ))}
-
-        {/* <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity> */}
       </ScrollView>
 
-      <TouchableOpacity style={styles.absoluteButton}>
+      <TouchableOpacity style={[
+        styles.absoluteButton, Platform.OS === 'ios' && { bottom: keyboardHeight }
+      ]}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
 
@@ -36,13 +52,7 @@ function Body() {
 }
 
 export default function App() {
-  return Platform.OS === 'ios' ? (
-    <KeyboardAwareScrollView>
-      <View style={styles.container}>
-        <Body />
-      </View>
-    </KeyboardAwareScrollView>
-  ) : (
+  return (
     <View style={styles.container}>
       <Body />
     </View >
@@ -50,7 +60,7 @@ export default function App() {
 }
 
 const BUTTON_HEIGHT = 60;
-const BUTTON_MARGIN_BOTTOM = Platform.OS === 'ios' ? 20 : undefined;
+const BUTTON_MARGIN_BOTTOM = Platform.OS === 'ios' ? 10 : undefined;
 
 const styles = StyleSheet.create({
   container: {
