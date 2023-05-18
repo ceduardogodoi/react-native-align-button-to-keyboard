@@ -1,6 +1,5 @@
 import {
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,10 +7,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export default function App() {
+function Body() {
   return (
-    <View style={styles.container}>
+    <>
       <ScrollView style={styles.scrollView}>
         {Array.from({ length: 15 }).fill('').map((_, index) => (
           <TextInput
@@ -31,7 +31,21 @@ export default function App() {
       </TouchableOpacity>
 
       <View style={styles.spacer} />
-    </View>
+    </>
+  );
+}
+
+export default function App() {
+  return Platform.OS === 'ios' ? (
+    <KeyboardAwareScrollView>
+      <View style={styles.container}>
+        <Body />
+      </View>
+    </KeyboardAwareScrollView>
+  ) : (
+    <View style={styles.container}>
+      <Body />
+    </View >
   );
 }
 
