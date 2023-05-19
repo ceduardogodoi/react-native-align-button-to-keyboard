@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-function Body() {
+export default function App() {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
@@ -29,32 +30,31 @@ function Body() {
   }, []);
 
   return (
-    <>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {Array.from({ length: 15 }).fill('').map((_, index) => (
-          <TextInput
-            key={index}
-            style={styles.input}
-            placeholder="I'm a TextInput"
-          />
-        ))}
+        <KeyboardAwareScrollView>
+          {Array.from({ length: 15 }).fill('').map((_, index) => (
+            <TextInput
+              key={index}
+              style={styles.input}
+              placeholder="I'm a TextInput"
+            />
+          ))}
+        </KeyboardAwareScrollView>
       </ScrollView>
 
       <TouchableOpacity style={[
-        styles.absoluteButton, Platform.OS === 'ios' && { bottom: keyboardHeight }
+        styles.absoluteButton,
+        Platform.OS === 'ios' && {
+          bottom: keyboardHeight,
+        }
       ]}>
-        <Text style={styles.buttonText}>Submit</Text>
+        <Text style={styles.buttonText}>
+          Submit
+        </Text>
       </TouchableOpacity>
 
       <View style={styles.spacer} />
-    </>
-  );
-}
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Body />
     </View >
   );
 }
